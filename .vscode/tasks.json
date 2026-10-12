@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Bee My Office: Start MariaDB",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$mysql = 'C:\\xampp\\mysql\\bin'; & \"$mysql\\mysqladmin.exe\" --connect-timeout=2 -h 127.0.0.1 -u root ping *> $null; if ($LASTEXITCODE -ne 0) { Start-Process -FilePath \"$mysql\\mysqld.exe\" -ArgumentList @('--defaults-file=' + \"$mysql\\my.ini\", '--console') -WindowStyle Minimized; $ready = $false; for ($i = 0; $i -lt 30; $i++) { Start-Sleep -Seconds 1; & \"$mysql\\mysqladmin.exe\" --connect-timeout=2 -h 127.0.0.1 -u root ping *> $null; if ($LASTEXITCODE -eq 0) { $ready = $true; break } }; if (-not $ready) { throw 'MariaDB did not start. Check XAMPP and confirm port 3306 is available.' } }"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Bee My Office: PHP Server",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$url = 'http://127.0.0.1:8000/api.php?resource=services'; curl.exe --silent --fail $url -o nul *> $null; if ($LASTEXITCODE -eq 0) { Write-Output 'Bee My Office PHP server already running'; exit 0 }; & 'C:\\xampp\\php\\php.exe' -S 127.0.0.1:8000 router.php"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "PHP [0-9.]+ Development Server|Bee My Office PHP server already running",
+          "endsPattern": "Development Server \\(http://127\\.0\\.0\\.1:8000\\) started|Bee My Office PHP server already running"
+        }
+      }
+    },
+    {
+      "label": "Bee My Office: Run",
+      "dependsOn": [
+        "Bee My Office: Start MariaDB",
+        "Bee My Office: PHP Server"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -68,13 +68,23 @@ try {
 
     if ($resource === 'inquiries' && $method === 'POST') {
         $data = readJsonBody();
-        $name = trim((string)($data['name'] ?? ''));
-        $email = trim((string)($data['email'] ?? ''));
-        $serviceSlug = trim((string)($data['service_slug'] ?? ''));
-        $adSource = trim((string)($data['ad_source'] ?? ''));
-        $message = trim((string)($data['message'] ?? ''));
-        $honeypot = trim((string)($data['website'] ?? ''));
-        $allowedAdSources = ['facebook', 'instagram', 'tiktok', 'linkedin', 'youtube', 'x', 'whatsapp', 'other-social-media', 'other'];
+        $name = trim((string) ($data['name'] ?? ''));
+        $email = trim((string) ($data['email'] ?? ''));
+        $serviceSlug = trim((string) ($data['service_slug'] ?? ''));
+        $adSource = trim((string) ($data['ad_source'] ?? ''));
+        $message = trim((string) ($data['message'] ?? ''));
+        $honeypot = trim((string) ($data['website'] ?? ''));
+        $allowedAdSources = [
+            'facebook',
+            'instagram',
+            'tiktok',
+            'linkedin',
+            'youtube',
+            'x',
+            'whatsapp',
+            'other-social-media',
+            'other'
+        ];
 
         if ($honeypot !== '') {
             respond(422, ['error' => 'The inquiry could not be accepted.']);
@@ -97,7 +107,12 @@ try {
 
         $serviceId = null;
         if ($serviceSlug !== '') {
-            $serviceQuery = $pdo->prepare('SELECT id FROM services WHERE slug = :slug AND status = "active" LIMIT 1');
+            $serviceQuery = $pdo->prepare(
+                'SELECT id
+                 FROM services
+                 WHERE slug = :slug AND status = "active"
+                 LIMIT 1'
+            );
             $serviceQuery->execute(['slug' => $serviceSlug]);
             $serviceId = $serviceQuery->fetchColumn();
             if ($serviceId === false) {
@@ -106,8 +121,11 @@ try {
         }
 
         $insert = $pdo->prepare(
-              'INSERT INTO service_inquiries (service_id, contact_name, contact_email, ad_source, message, status)
-               VALUES (:service_id, :contact_name, :contact_email, :ad_source, :message, "new")'
+            'INSERT INTO service_inquiries (
+                service_id, contact_name, contact_email, ad_source, message, status
+            ) VALUES (
+                :service_id, :contact_name, :contact_email, :ad_source, :message, "new"
+            )'
         );
         $insert->execute([
             'service_id' => $serviceId,

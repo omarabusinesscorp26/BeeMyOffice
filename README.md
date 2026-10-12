@@ -15,9 +15,7 @@ The restricted app account can read the service catalog and save public inquirie
 
 ### Open the website
 
-For a quick public-site preview without starting MariaDB, double-click [`Open-BeeMyOffice-Preview.bat`](./Open-BeeMyOffice-Preview.bat). It finds PHP in the usual XAMPP folder or on `PATH`, starts the site, and opens <http://127.0.0.1:8010/>. The built-in service list is shown; database-backed inquiries require the full setup below.
-
-To use the database-backed features, double-click [`Start-BeeMyOffice.bat`](./Start-BeeMyOffice.bat). It starts MariaDB and the PHP website if they are not already running, waits until the service API responds, then opens the homepage in your browser.
+In VS Code, open **Run and Debug**, select **Bee My Office**, and press **F5**. The VS Code task starts MariaDB if needed, starts the PHP server on port 8000, and opens the site in Chrome. Stop the PHP server from the VS Code terminal when finished.
 
 Or, from PowerShell in the project directory:
 
